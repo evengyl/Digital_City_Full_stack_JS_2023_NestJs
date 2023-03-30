@@ -1,16 +1,22 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query} from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query} from "@nestjs/common";
+import { AnimalDTO } from "src/shared/DTO/animals/Animal.dto";
+import { IncomingService } from "./incoming.service";
 
 
 @Controller("api/incoming")
 export class IncomingController{
+    
+    constructor(
+        private readonly incomingServe : IncomingService
+    ){}
 
     @Get()
-    getAll(
+    async getAll(
         @Query("colorfilter") colorFilter : boolean,
         @Query("weightFilter") weightFilter : boolean,
-    ){
-        console.log(colorFilter)
-        console.log(weightFilter)
+    ) : Promise<AnimalDTO[]>
+    {
+        return await this.incomingServe.getAll()
     }
 
 
@@ -49,7 +55,7 @@ export class IncomingController{
         console.log(newAge)
     }
 
-    
+
     @Delete(":animalId")
     deceasedAnimal(
         @Param("animalId") animalId : number
