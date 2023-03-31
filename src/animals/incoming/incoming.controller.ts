@@ -1,5 +1,10 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query} from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query, ValidationPipe} from "@nestjs/common";
+import { ParseIntPipe } from "@nestjs/common/pipes";
 import { AnimalDTO } from "src/shared/DTO/animals/Animal.dto";
+import { AnimalId } from "src/shared/DTO/animals/AnimalId";
+import { CategoryId } from "src/shared/DTO/animals/CategoryAnimal";
+import { UpdateAgeAnimalDTO } from "src/shared/DTO/animals/UpdateAgeAnimal.dto";
+import { AnimalsEntity } from "src/shared/entities/animals/Animals.entity";
 import { IncomingService } from "./incoming.service";
 
 
@@ -11,27 +16,27 @@ export class IncomingController{
     ){}
 
     @Get()
-    async getAll(
+    getAll(
         @Query("colorfilter") colorFilter : boolean,
         @Query("weightFilter") weightFilter : boolean,
-    ) : Promise<AnimalDTO[]>
+    ) : Promise<[AnimalDTO[] , number]>
     {
-        return await this.incomingServe.getAll()
+        return this.incomingServe.getAll()
     }
 
 
     @Get(":animalId")
-    getOne(
-        @Param("animalId") animalId : number
+    getOne( 
+        @Param("animalId", ParseIntPipe) animalId : AnimalId
     ){
-        console.log(animalId)
+        return this.incomingServe.getOne(animalId)
     }
 
 
     @Get(":categoryId/:animalId")
     getOneByOneCateg(
-        @Param("categoryId") categoryId : number,
-        @Param("animalId") animalId : number
+        @Param("categoryId") categoryId : CategoryId,
+        @Param("animalId") animalId : AnimalId
     ){
         console.log(categoryId)
         console.log(animalId)
@@ -40,27 +45,26 @@ export class IncomingController{
 
     @Post()
     incomingNew(
-        @Body() newArrival : any
+        @Body(ValidationPipe) newArrival : AnimalDTO
     ){
-        console.log(newArrival)
+        return this.incomingServe.incomingNew(newArrival)
     }
 
 
     @Put(":animalId")
-    outputAnimal(
-        @Param("animalId") animalId : number,
-        @Body() newAge : any
+    updateAge(
+        @Param("animalId", ParseIntPipe) animalId : AnimalId,
+        @Body(ValidationPipe) newAge : UpdateAgeAnimalDTO
     ){
-        console.log(animalId)
-        console.log(newAge)
+        return this.incomingServe.updateAge(animalId, newAge)
     }
 
 
     @Delete(":animalId")
     deceasedAnimal(
-        @Param("animalId") animalId : number
+        @Param("animalId") animalId : AnimalId
     ){
-        console.log(animalId)
+        return this.incomingServe.deceasedAnimal(animalId)
 //DEAD DE PUPUCE
     }
 }
