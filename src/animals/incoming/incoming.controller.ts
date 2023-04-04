@@ -1,20 +1,36 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query, ValidationPipe} from "@nestjs/common";
+import { ArgumentsHost, Body, Catch, Controller, Delete, Get, HttpException, HttpStatus, NotFoundException, Param, Post, Put, Query, ValidationPipe} from "@nestjs/common";
 import { ParseIntPipe } from "@nestjs/common/pipes";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiParam, ApiQuery, ApiResponse } from "@nestjs/swagger/dist";
 import { AnimalDTO } from "src/shared/DTO/animals/Animal.dto";
 import { AnimalId } from "src/shared/DTO/animals/AnimalId";
-import { CategoryId } from "src/shared/DTO/animals/CategoryAnimal";
+import { CategoryAnimalDTO } from "src/shared/DTO/animals/CategoryAnimal.dto";
+import { CreateAnimalDTO } from "src/shared/DTO/animals/CreateAnimal.dto";
 import { UpdateAgeAnimalDTO } from "src/shared/DTO/animals/UpdateAgeAnimal.dto";
-import { AnimalsEntity } from "src/shared/entities/animals/Animals.entity";
+import { UpdateResult } from "typeorm";
 import { IncomingService } from "./incoming.service";
 
+export enum categPossible{
+    CHIENT = 1,
+    CHAT = 2,
+    DAUPHIN = 3,
+    RAT = 8,
+    SAURIS = 10
+}
 
+@ApiTags("Gestion des animaux de la SPA")
 @Controller("api/incoming")
 export class IncomingController{
+    
     
     constructor(
         private readonly incomingServe : IncomingService
     ){}
 
+    @ApiOperation({ summary : "Get all des animaux de la spa"})
+    @ApiQuery({ name : "colorfilter",  required : false })
+    @ApiQuery({ name : "weightFilter",  required : false })
+    @ApiResponse({ type : AnimalDTO})
     @Get()
     getAll(
         @Query("colorfilter") colorFilter : boolean,
@@ -25,46 +41,84 @@ export class IncomingController{
     }
 
 
+    @ApiOperation({ summary : "Get one animal par son id"})
+    @ApiParam({ required : true, name : "animalId", example : "2" })
+    @ApiResponse({ type : AnimalDTO})
     @Get(":animalId")
-    getOne( 
+    async getOne( 
         @Param("animalId", ParseIntPipe) animalId : AnimalId
-    ){
-        return this.incomingServe.getOne(animalId)
+    ) : Promise<AnimalDTO>
+    {
+        let result = await this.incomingServe.getOne(animalId)
+
+
+        if(!result) throw new NotFoundException("Not found animal")
+        else return result
     }
 
-
-    @Get(":categoryId/:animalId")
-    getOneByOneCateg(
-        @Param("categoryId") categoryId : CategoryId,
-        @Param("animalId") animalId : AnimalId
-    ){
-        console.log(categoryId)
-        console.log(animalId)
+    /**
+     * get all animal by categ
+     * @param categoryId 
+     */
+    @ApiOperation({ summary : "Récup les animaux par un category id 1 = chat, 2 = chien"})
+    @ApiParam({ required : true, name : "categoryId", enum : categPossible, enumName :"categPossible"})
+    @ApiResponse({ type : CategoryAnimalDTO})
+    @Get("categ/:categoryId")
+    async getAllByCateg(
+        @Param("categoryId") categoryId : number
+    ) : Promise<CategoryAnimalDTO>
+    {
+        return await this.incomingServe.getAllByCateg(categoryId)
     }
 
-
+    @ApiOperation({ summary : "Création d'un animal"})
+    @ApiBody({ type : CreateAnimalDTO})
+    @ApiResponse({ type : AnimalDTO})
     @Post()
     incomingNew(
-        @Body(ValidationPipe) newArrival : AnimalDTO
-    ){
+        @Body(ValidationPipe) newArrival : CreateAnimalDTO
+    ) : Promise<AnimalDTO>
+    {
         return this.incomingServe.incomingNew(newArrival)
     }
 
 
     @Put(":animalId")
+    @ApiOperation({ summary : "Modification de l'age d'un animal"})
+    @ApiBody({ type : UpdateAgeAnimalDTO})
+    @ApiResponse({ type : AnimalDTO})
+    @ApiParam({ required : true, name : "animalId", example : "2"})
     updateAge(
         @Param("animalId", ParseIntPipe) animalId : AnimalId,
         @Body(ValidationPipe) newAge : UpdateAgeAnimalDTO
-    ){
+    ) : Promise<AnimalDTO>
+    {
         return this.incomingServe.updateAge(animalId, newAge)
     }
 
 
     @Delete(":animalId")
+    @ApiResponse({ type : UpdateResult})
+    @ApiParam({ required : true, name : "animalId", example : "2"})
     deceasedAnimal(
         @Param("animalId") animalId : AnimalId
-    ){
+    ) : Promise<UpdateResult>
+    {
         return this.incomingServe.deceasedAnimal(animalId)
 //DEAD DE PUPUCE
     }
+
+
+    @Put("revive/:animalId")
+    @ApiResponse({ type : AnimalDTO})
+    @ApiParam({ required : true, name : "animalId", example : "2"})
+    zombieAnimal(
+        @Param("animalId") animalId : AnimalId
+    ) : Promise<AnimalDTO>
+    {
+        return this.incomingServe.zombieAnimal(animalId)
+//Walking dead DE PUPUCE
+    }
+
+
 }

@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
 import { LifeTimeEntity } from "../LifeTime.entity"
+import { CategoryAnimalsEntity } from "./CategoryAnimals.entity"
 
 @Entity("animals")
 export class AnimalsEntity extends LifeTimeEntity{
@@ -10,8 +11,9 @@ export class AnimalsEntity extends LifeTimeEntity{
     @Column({length : 15, nullable : false, default : "N/C"})
     name : string
 
-    @Column({ length : 15, nullable : false, default : "N/C"})
-    category : string
+    @ManyToOne(() => CategoryAnimalsEntity, (categ) => categ.animals, { cascade : ["insert", "update"] })
+    @JoinColumn()
+    category : CategoryAnimalsEntity
 
     @Column({ length : 6, nullable : false, default : "N/C"})
     age : string

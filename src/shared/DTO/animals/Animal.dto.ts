@@ -1,4 +1,6 @@
+import { ApiProperty } from "@nestjs/swagger"
 import { IsDefined, IsNumber, IsString, MaxLength, MinLength } from "class-validator"
+import { CategoryAnimalDTO } from "./CategoryAnimal.dto"
 
 
 export class AnimalDTO{
@@ -11,23 +13,23 @@ export class AnimalDTO{
     @IsDefined()
     @MaxLength(15)
     @MinLength(2)
+    @ApiProperty({ example : "Petito"})
     name : string
 
-    @IsString()
     @IsDefined()
-    @MaxLength(15)
-    @MinLength(2)
-    category : string
+    category : CategoryAnimalDTO
 
     @IsString()
     @IsDefined()
-    @MaxLength(6)
-    @MinLength(5)
+    @MaxLength(2)
+    @MinLength(1)
+    @ApiProperty({ example : "5"})
     age : string
 
     @IsString()
     @IsDefined()
     @MaxLength(25)
     @MinLength(2)
+    @ApiProperty({ example : "Brussels"})
     cityFound : string
 }
