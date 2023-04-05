@@ -1,6 +1,6 @@
-import { CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from "typeorm"
+import { BaseEntity, CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from "typeorm"
 
-export class LifeTimeEntity{
+export class LifeTimeEntity extends BaseEntity{
 
     @CreateDateColumn()
     createdAt : Date

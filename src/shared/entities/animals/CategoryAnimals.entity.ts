@@ -1,8 +1,8 @@
-import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { BaseEntity, Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { AnimalsEntity } from "./Animals.entity"
 
 @Entity("category_animals")
-export class CategoryAnimalsEntity{
+export class CategoryAnimalsEntity extends BaseEntity{
 
     @PrimaryGeneratedColumn()
     id : number
