@@ -9,9 +9,7 @@ import { CategoryAnimalDTO } from "./CategoryAnimal.dto";
 //supposons que nous commencions avec un type comme :
 
 export class CreateAnimalDTO{
-    @IsNumber()
-    @IsDefined()
-    id : number
+
 
     @IsString()
     @IsDefined()

@@ -18,6 +18,14 @@ async function bootstrap() {
   .setTitle("Api REST de la SPA")
   .setDescription("Permet de gérer une spa avec des dauphins")
   .setVersion("0.0.1")
+  .addBearerAuth({
+    type : "http",
+    name : "Bearer",
+    bearerFormat : "Bearer",
+    in : "Header",
+    scheme : "Bearer"
+  }, "access_token"
+  )
   .build()
 
   const pageSwagger = SwaggerModule.createDocument(app, configSwagger)

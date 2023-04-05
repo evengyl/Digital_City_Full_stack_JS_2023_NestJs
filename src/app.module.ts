@@ -1,6 +1,12 @@
 import { Module } from '@nestjs/common';
+import { RequestMethod } from '@nestjs/common/enums';
+import { MiddlewareConsumer, NestModule } from '@nestjs/common/interfaces';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { IncomingModule } from './animals/incoming/incoming.module';
+import { UsersEntity } from './shared/entities/users/Users.entity';
+import { CheckUserMiddleware } from './shared/middlewares/checkUser.middleware';
+import { IncomingModule } from './_animals/incoming/incoming.module';
+import { AuthModule } from './_auth/auth.module';
+import { UsersModule } from './_users/users.module';
 
 @Module({
   imports: [
@@ -20,9 +26,26 @@ import { IncomingModule } from './animals/incoming/incoming.module';
       },
       //logging : "all"
     }),
-    IncomingModule
+    TypeOrmModule.forFeature([
+      UsersEntity
+    ]),
+    AuthModule,
+    IncomingModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule{
+
+  configure(consumer: MiddlewareConsumer)
+  {
+    consumer.apply(CheckUserMiddleware)
+      .forRoutes(
+        { path : "api/incoming/:userId", method : RequestMethod.POST },
+        { path : "api/incoming/:animalId/:userId", method : RequestMethod.PUT }
+      )
+
+
+  }
+}
