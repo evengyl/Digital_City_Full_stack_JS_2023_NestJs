@@ -1,11 +1,6 @@
-import { Resource } from "@adminjs/typeorm";
 import { validate } from "class-validator";
 import { BaseEntity, Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 import { LifeTimeEntity } from "../LifeTime.entity"
-
-
-Resource.validate = validate;
-
 
 @Entity("users")
 export class UsersEntity extends LifeTimeEntity{

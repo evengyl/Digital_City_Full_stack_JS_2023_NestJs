@@ -6,7 +6,6 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "doctor": "clinic doctor --on-port 'autocannon localhost:$PORT' -- node dist/main",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -21,9 +20,6 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@adminjs/express": "^5.1.0",
-    "@adminjs/nestjs": "^5.1.1",
-    "@adminjs/typeorm": "^4.0.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/jwt": "^10.0.3",
@@ -31,12 +27,9 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.3.0",
     "@nestjs/typeorm": "^9.0.1",
-    "adminjs": "^6.8.7",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "clinic": "^12.1.0",
-    "express-formidable": "^1.2.0",
-    "express-session": "^1.17.3",
     "mssql": "^7.3.5",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
